@@ -13,6 +13,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart' as retrofit;
 import 'package:source_gen/source_gen.dart';
 import 'package:tuple/tuple.dart';
+import 'package:source_gen/src/utils.dart';
 
 const _analyzerIgnores =
     '// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers';
@@ -44,6 +45,8 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
   static const _dataVar = 'data';
   static const _localDataVar = '_data';
   static const _dioVar = '_dio';
+  static const _providerVar = '_provider';
+  static const _protoBufConverter = '_protoBufConverter';
   static const _extraVar = 'extra';
   static const _localExtraVar = '_extra';
   static const _contentType = 'contentType';
@@ -92,7 +95,7 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
       c
         ..name = '_$className'
         ..types.addAll(element.typeParameters.map((e) => refer(e.name)))
-        ..fields.addAll([_buildDioFiled(), _buildBaseUrlFiled(baseUrl)])
+        ..fields.addAll([_buildProviderFiled(), _buildBaseUrlFiled(baseUrl)])
         ..constructors.addAll(
           annotClassConsts.map(
             (e) => _generateConstructor(baseUrl, superClassConst: e),
@@ -100,7 +103,8 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
         )
         ..methods.addAll(_parseMethods(element));
       if (annotClassConsts.isEmpty) {
-        c.constructors.add(_generateConstructor(baseUrl));
+        final factoryConst = element.constructors.firstWhereOrNull((element) => element.isFactory);
+        c.constructors.add(_generateConstructor(baseUrl, factoryConst: factoryConst));
         c.implements.add(refer(_generateTypeParameterizedName(element)));
       } else {
         c.extend = Reference(_generateTypeParameterizedName(element));
@@ -109,6 +113,8 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
         c.methods.add(_generateOptionsCastMethod());
       }
       c.methods.addAll([
+        _generateDioGetterMethod(),
+        _generateProtoBufCoverGetterMethod(),
         _generateTypeSetterMethod(),
         _generateCombineBaseUrlsMethod(),
       ]);
@@ -118,6 +124,32 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
     return DartFormatter()
         .format([_analyzerIgnores, classBuilder.accept(emitter)].join('\n\n'));
   }
+
+  // tory: 添加provder变量
+  Field _buildProviderFiled() => Field(
+        (m) => m
+      ..name = _providerVar
+      ..type = refer('RetrofitProvider')
+      ..modifier = FieldModifier.final$,
+  );
+
+  Method _generateDioGetterMethod() => Method((m) {
+    m
+      ..name = _dioVar
+      ..returns = refer('Dio')
+      //..lambda = true
+      ..type = MethodType.getter
+      ..body = const Code('''return $_providerVar.dio;''');
+  });
+
+  Method _generateProtoBufCoverGetterMethod() => Method((m) {
+    m
+      ..name = _protoBufConverter
+      ..returns = refer('ProtoBufConverter')
+      //..lambda = true
+      ..type = MethodType.getter
+      ..body = const Code('''return $_providerVar.protoBufConverter;''');
+  });
 
   Field _buildDioFiled() => Field(
         (m) => m
@@ -136,15 +168,32 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
   Constructor _generateConstructor(
     String? url, {
     ConstructorElement? superClassConst,
+    ConstructorElement? factoryConst,
   }) =>
       Constructor((c) {
-        c.requiredParameters.add(
-          Parameter(
-            (p) => p
-              ..name = _dioVar
-              ..toThis = true,
-          ),
-        );
+        final firstParameter = factoryConst?.parameters.firstWhereOrNull((element) => true);
+        final isFirstDio = firstParameter != null && _typeChecker(Dio).isExactlyType(firstParameter.type);
+        if (isFirstDio) {
+          c.requiredParameters.add(
+            Parameter(
+                  (p) => p
+                ..name = 'dio'
+                ..type = Reference('Dio')
+            ),
+          );
+          c.initializers = ListBuilder(
+            [Code('$_providerVar = DioRetrofitProvider(dio: dio)')]
+          );
+        } else {
+          c.requiredParameters.add(
+            Parameter(
+                  (p) => p
+                ..name = _providerVar
+                ..toThis = true,
+            ),
+          );
+        }
+        
         c.optionalParameters.add(
           Parameter(
             (p) => p
@@ -153,6 +202,7 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
               ..toThis = true,
           ),
         );
+        log.warning('superClassConst: $superClassConst, ${superClassConst?.parameters}');
         if (superClassConst != null) {
           var superConstName = 'super';
           if (superClassConst.name.isNotEmpty) {
@@ -499,6 +549,7 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
           refer(receiveProgress.item1.displayName);
     }
 
+    // tory: wrappedReturnType是Future中包裹的类型
     final wrappedReturnType = _getResponseType(m.returnType);
 
     final options = _parseOptions(m, namedArguments, blocks, extraOptions);
@@ -510,12 +561,25 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
       );
       return Block.of(blocks);
     }
+    final isPbType = _isPbType(wrappedReturnType);
 
     final isWrapped =
         _typeChecker(retrofit.HttpResponse).isExactlyType(wrappedReturnType);
     final returnType =
         isWrapped ? _getResponseType(wrappedReturnType) : wrappedReturnType;
-    if (returnType == null || 'void' == returnType.toString()) {
+    if (isPbType) {
+      // tory: 添加pb解析
+      blocks
+        ..add(
+          refer('final $_resultVar = await $_dioVar.fetch')
+              .call([options], {}, []).statement,
+        )..add(
+          Code('''
+      return $_protoBufConverter($_resultVar.data);
+          '''),
+      );
+      
+    } else if (returnType == null || 'void' == returnType.toString()) {
       if (isWrapped) {
         blocks
           ..add(
@@ -2279,3 +2343,7 @@ extension IterableExtension<T> on Iterable<T> {
     return null;
   }
 }
+
+bool _isPbType(DartType dartType) =>
+    TypeChecker.fromUrl('package:protobuf/protobuf.dart#GeneratedMessage')
+        .isSuperTypeOf(dartType);
