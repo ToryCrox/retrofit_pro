@@ -1,0 +1,68 @@
+syntax = "proto3";
+package pb;
+
+message UserInfoResp {
+  uint32 code = 1;
+  string msg = 2;
+  UserInfo data = 3;
+}
+
+message UserInfo {
+  UserBasic base = 1; //用户基本信息
+  UserStatus status = 2;//用户基本状态，客户端需要根据这些状态进行不同样式显示
+  UserGpsLocation gpsLocation = 3; // 地理位置
+}
+
+//用户基本信息
+message UserBasic {
+  uint32 uid = 1;
+  string name = 2;//人名称
+  string avatar = 3; // 头像
+  UserSex sex = 5; //性别
+  uint32 age = 6;//年龄
+  string phone = 7;//手机号
+  UserLocation location = 8; // 用户位置
+  repeated UserTag tags = 9;
+  string introduction = 10; //自我介绍
+}
+
+// 用户状态方面的属性
+message UserStatus {
+  bool is_online = 1; // 是否在线
+  bool is_new = 2;// 是否新用户
+  bool is_follow = 3;//是否关注了;false:没有，true:已关注
+}
+
+// 用户性别
+enum UserSex {
+  unknown = 0;
+  male = 1;
+  female = 2;
+}
+
+// 用户设置的位置
+message UserLocation {
+  string country = 1;
+  string province = 2;
+  string city = 3;
+}
+
+// 用户标签
+message UserTag {
+  string name = 1; // 标签名称
+  int32 type = 2; // 标签类型
+  int32 id = 3; // 标签id
+}
+
+// 用户位置
+message UserGpsLocation {
+  string country = 1;
+  string province = 2;
+  string city = 3;
+  string district = 4;
+  string street = 5;
+  string street_number = 6;
+  string address = 7;
+  double latitude = 8;
+  double longitude = 9;
+}
