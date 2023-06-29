@@ -13,7 +13,6 @@ import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart' as retrofit;
 import 'package:source_gen/source_gen.dart';
 import 'package:tuple/tuple.dart';
-import 'package:source_gen/src/utils.dart';
 
 const _analyzerIgnores =
     '// ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers';
@@ -145,7 +144,7 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
   Method _generateProtoBufCoverGetterMethod() => Method((m) {
     m
       ..name = _protoBufConverter
-      ..returns = refer('ProtoBufConverter')
+      ..returns = refer('ProtoBufConverter?')
       //..lambda = true
       ..type = MethodType.getter
       ..body = const Code('''return $_providerVar.protoBufConverter;''');
@@ -575,8 +574,20 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
               .call([options], {}, []).statement,
         )..add(
           Code('''
-      return $_protoBufConverter($_resultVar.data);
-          '''),
+      final _pbModel = $wrappedReturnType.create();
+      final _resultData = $_resultVar.data;
+      if ($_protoBufConverter != null) {
+        return $_protoBufConverter!(_pbModel, _resultData);
+      } else if (_resultData is List<int>) {
+        _pbModel.mergeFromBuffer(_resultData);
+      } else if (_resultData is String) {
+        final _json = await $_providerVar.jsonDecodeCallback(_resultData);
+        _pbModel.mergeFromProto3Json(_json, ignoreUnknownFields: true);
+      } else {
+        _pbModel.mergeFromProto3Json(_resultData, ignoreUnknownFields: true);
+      }
+      return _pbModel;
+      '''),
       );
       
     } else if (returnType == null || 'void' == returnType.toString()) {

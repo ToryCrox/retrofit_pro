@@ -1,5 +1,8 @@
 
 
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 abstract class RetrofitProvider {
@@ -8,15 +11,21 @@ abstract class RetrofitProvider {
   Dio get dio;
   
   /// 提供protobuf转换
-  ProtoBufConverter get protoBufConverter;
+  ProtoBufConverter? get protoBufConverter;
+
+  /// json解析
+  JsonDecodeCallback get jsonDecodeCallback => jsonDecode;
+  
 }
 
 /// protubuf转换
-typedef ProtoBufConverter<T> = T Function(dynamic data);
+typedef ProtoBufConverter<T> = T Function(T pbModel, dynamic data);
 
 
+typedef JsonDecodeCallback = FutureOr<dynamic> Function(String);
 
-class DioRetrofitProvider implements RetrofitProvider {
+
+class DioRetrofitProvider extends RetrofitProvider {
   DioRetrofitProvider({
     required this.dio,
     ProtoBufConverter? protoBufConverter,
@@ -28,5 +37,5 @@ class DioRetrofitProvider implements RetrofitProvider {
   final ProtoBufConverter? _protoBufConverter;
 
   @override
-  ProtoBufConverter get protoBufConverter => _protoBufConverter ?? (throw UnsupportedError('protoBufConverter is not supported'));
+  ProtoBufConverter? get protoBufConverter => _protoBufConverter;
 }

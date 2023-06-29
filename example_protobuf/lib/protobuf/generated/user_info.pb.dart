@@ -1,13 +1,9 @@
-//
+///
 //  Generated code. Do not modify.
 //  source: user_info.proto
 //
 // @dart = 2.12
-
-// ignore_for_file: annotate_overrides, camel_case_types
-// ignore_for_file: constant_identifier_names, library_prefixes
-// ignore_for_file: non_constant_identifier_names, prefer_final_fields
-// ignore_for_file: unnecessary_import, unnecessary_this, unused_import
+// ignore_for_file: annotate_overrides,camel_case_types,constant_identifier_names,directives_ordering,library_prefixes,non_constant_identifier_names,prefer_final_fields,return_of_invalid_type,unnecessary_const,unnecessary_import,unnecessary_this,unused_import,unused_shown_name
 
 import 'dart:core' as $core;
 
@@ -18,18 +14,33 @@ import 'user_info.pbenum.dart';
 export 'user_info.pbenum.dart';
 
 class UserInfoResp extends $pb.GeneratedMessage {
-  factory UserInfoResp() => create();
-  UserInfoResp._() : super();
-  factory UserInfoResp.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UserInfoResp.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserInfoResp', package: const $pb.PackageName(_omitMessageNames ? '' : 'pb'), createEmptyInstance: create)
-    ..a<$core.int>(1, _omitFieldNames ? '' : 'code', $pb.PbFieldType.OU3)
-    ..aOS(2, _omitFieldNames ? '' : 'msg')
-    ..aOM<UserInfo>(3, _omitFieldNames ? '' : 'data', subBuilder: UserInfo.create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserInfoResp', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'code', $pb.PbFieldType.OU3)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'msg')
+    ..aOM<UserInfo>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'data', subBuilder: UserInfo.create)
     ..hasRequiredFields = false
   ;
 
+  UserInfoResp._() : super();
+  factory UserInfoResp({
+    $core.int? code,
+    $core.String? msg,
+    UserInfo? data,
+  }) {
+    final _result = create();
+    if (code != null) {
+      _result.code = code;
+    }
+    if (msg != null) {
+      _result.msg = msg;
+    }
+    if (data != null) {
+      _result.data = data;
+    }
+    return _result;
+  }
+  factory UserInfoResp.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserInfoResp.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -39,10 +50,8 @@ class UserInfoResp extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  UserInfoResp copyWith(void Function(UserInfoResp) updates) => super.copyWith((message) => updates(message as UserInfoResp)) as UserInfoResp;
-
+  UserInfoResp copyWith(void Function(UserInfoResp) updates) => super.copyWith((message) => updates(message as UserInfoResp)) as UserInfoResp; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static UserInfoResp create() => UserInfoResp._();
   UserInfoResp createEmptyInstance() => create();
@@ -82,18 +91,33 @@ class UserInfoResp extends $pb.GeneratedMessage {
 }
 
 class UserInfo extends $pb.GeneratedMessage {
-  factory UserInfo() => create();
-  UserInfo._() : super();
-  factory UserInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UserInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserInfo', package: const $pb.PackageName(_omitMessageNames ? '' : 'pb'), createEmptyInstance: create)
-    ..aOM<UserBasic>(1, _omitFieldNames ? '' : 'base', subBuilder: UserBasic.create)
-    ..aOM<UserStatus>(2, _omitFieldNames ? '' : 'status', subBuilder: UserStatus.create)
-    ..aOM<UserGpsLocation>(3, _omitFieldNames ? '' : 'gpsLocation', protoName: 'gpsLocation', subBuilder: UserGpsLocation.create)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserInfo', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
+    ..aOM<UserBasic>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'base', subBuilder: UserBasic.create)
+    ..aOM<UserStatus>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'status', subBuilder: UserStatus.create)
+    ..aOM<UserGpsLocation>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'gpsLocation', protoName: 'gpsLocation', subBuilder: UserGpsLocation.create)
     ..hasRequiredFields = false
   ;
 
+  UserInfo._() : super();
+  factory UserInfo({
+    UserBasic? base,
+    UserStatus? status,
+    UserGpsLocation? gpsLocation,
+  }) {
+    final _result = create();
+    if (base != null) {
+      _result.base = base;
+    }
+    if (status != null) {
+      _result.status = status;
+    }
+    if (gpsLocation != null) {
+      _result.gpsLocation = gpsLocation;
+    }
+    return _result;
+  }
+  factory UserInfo.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserInfo.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -103,10 +127,8 @@ class UserInfo extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  UserInfo copyWith(void Function(UserInfo) updates) => super.copyWith((message) => updates(message as UserInfo)) as UserInfo;
-
+  UserInfo copyWith(void Function(UserInfo) updates) => super.copyWith((message) => updates(message as UserInfo)) as UserInfo; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static UserInfo create() => UserInfo._();
   UserInfo createEmptyInstance() => create();
@@ -150,24 +172,63 @@ class UserInfo extends $pb.GeneratedMessage {
 }
 
 class UserBasic extends $pb.GeneratedMessage {
-  factory UserBasic() => create();
-  UserBasic._() : super();
-  factory UserBasic.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UserBasic.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserBasic', package: const $pb.PackageName(_omitMessageNames ? '' : 'pb'), createEmptyInstance: create)
-    ..a<$core.int>(1, _omitFieldNames ? '' : 'uid', $pb.PbFieldType.OU3)
-    ..aOS(2, _omitFieldNames ? '' : 'name')
-    ..aOS(3, _omitFieldNames ? '' : 'avatar')
-    ..e<UserSex>(5, _omitFieldNames ? '' : 'sex', $pb.PbFieldType.OE, defaultOrMaker: UserSex.unknown, valueOf: UserSex.valueOf, enumValues: UserSex.values)
-    ..a<$core.int>(6, _omitFieldNames ? '' : 'age', $pb.PbFieldType.OU3)
-    ..aOS(7, _omitFieldNames ? '' : 'phone')
-    ..aOM<UserLocation>(8, _omitFieldNames ? '' : 'location', subBuilder: UserLocation.create)
-    ..pc<UserTag>(9, _omitFieldNames ? '' : 'tags', $pb.PbFieldType.PM, subBuilder: UserTag.create)
-    ..aOS(10, _omitFieldNames ? '' : 'introduction')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserBasic', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
+    ..a<$core.int>(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'uid', $pb.PbFieldType.OU3)
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'avatar')
+    ..e<UserSex>(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'sex', $pb.PbFieldType.OE, defaultOrMaker: UserSex.unknown, valueOf: UserSex.valueOf, enumValues: UserSex.values)
+    ..a<$core.int>(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'age', $pb.PbFieldType.OU3)
+    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'phone')
+    ..aOM<UserLocation>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'location', subBuilder: UserLocation.create)
+    ..pc<UserTag>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'tags', $pb.PbFieldType.PM, subBuilder: UserTag.create)
+    ..aOS(10, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'introduction')
     ..hasRequiredFields = false
   ;
 
+  UserBasic._() : super();
+  factory UserBasic({
+    $core.int? uid,
+    $core.String? name,
+    $core.String? avatar,
+    UserSex? sex,
+    $core.int? age,
+    $core.String? phone,
+    UserLocation? location,
+    $core.Iterable<UserTag>? tags,
+    $core.String? introduction,
+  }) {
+    final _result = create();
+    if (uid != null) {
+      _result.uid = uid;
+    }
+    if (name != null) {
+      _result.name = name;
+    }
+    if (avatar != null) {
+      _result.avatar = avatar;
+    }
+    if (sex != null) {
+      _result.sex = sex;
+    }
+    if (age != null) {
+      _result.age = age;
+    }
+    if (phone != null) {
+      _result.phone = phone;
+    }
+    if (location != null) {
+      _result.location = location;
+    }
+    if (tags != null) {
+      _result.tags.addAll(tags);
+    }
+    if (introduction != null) {
+      _result.introduction = introduction;
+    }
+    return _result;
+  }
+  factory UserBasic.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserBasic.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -177,10 +238,8 @@ class UserBasic extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  UserBasic copyWith(void Function(UserBasic) updates) => super.copyWith((message) => updates(message as UserBasic)) as UserBasic;
-
+  UserBasic copyWith(void Function(UserBasic) updates) => super.copyWith((message) => updates(message as UserBasic)) as UserBasic; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static UserBasic create() => UserBasic._();
   UserBasic createEmptyInstance() => create();
@@ -268,18 +327,33 @@ class UserBasic extends $pb.GeneratedMessage {
 }
 
 class UserStatus extends $pb.GeneratedMessage {
-  factory UserStatus() => create();
-  UserStatus._() : super();
-  factory UserStatus.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UserStatus.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserStatus', package: const $pb.PackageName(_omitMessageNames ? '' : 'pb'), createEmptyInstance: create)
-    ..aOB(1, _omitFieldNames ? '' : 'isOnline')
-    ..aOB(2, _omitFieldNames ? '' : 'isNew')
-    ..aOB(3, _omitFieldNames ? '' : 'isFollow')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserStatus', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
+    ..aOB(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isOnline')
+    ..aOB(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isNew')
+    ..aOB(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'isFollow')
     ..hasRequiredFields = false
   ;
 
+  UserStatus._() : super();
+  factory UserStatus({
+    $core.bool? isOnline,
+    $core.bool? isNew,
+    $core.bool? isFollow,
+  }) {
+    final _result = create();
+    if (isOnline != null) {
+      _result.isOnline = isOnline;
+    }
+    if (isNew != null) {
+      _result.isNew = isNew;
+    }
+    if (isFollow != null) {
+      _result.isFollow = isFollow;
+    }
+    return _result;
+  }
+  factory UserStatus.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserStatus.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -289,10 +363,8 @@ class UserStatus extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  UserStatus copyWith(void Function(UserStatus) updates) => super.copyWith((message) => updates(message as UserStatus)) as UserStatus;
-
+  UserStatus copyWith(void Function(UserStatus) updates) => super.copyWith((message) => updates(message as UserStatus)) as UserStatus; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static UserStatus create() => UserStatus._();
   UserStatus createEmptyInstance() => create();
@@ -330,18 +402,33 @@ class UserStatus extends $pb.GeneratedMessage {
 }
 
 class UserLocation extends $pb.GeneratedMessage {
-  factory UserLocation() => create();
-  UserLocation._() : super();
-  factory UserLocation.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UserLocation.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserLocation', package: const $pb.PackageName(_omitMessageNames ? '' : 'pb'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'country')
-    ..aOS(2, _omitFieldNames ? '' : 'province')
-    ..aOS(3, _omitFieldNames ? '' : 'city')
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserLocation', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'country')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'province')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'city')
     ..hasRequiredFields = false
   ;
 
+  UserLocation._() : super();
+  factory UserLocation({
+    $core.String? country,
+    $core.String? province,
+    $core.String? city,
+  }) {
+    final _result = create();
+    if (country != null) {
+      _result.country = country;
+    }
+    if (province != null) {
+      _result.province = province;
+    }
+    if (city != null) {
+      _result.city = city;
+    }
+    return _result;
+  }
+  factory UserLocation.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserLocation.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -351,10 +438,8 @@ class UserLocation extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  UserLocation copyWith(void Function(UserLocation) updates) => super.copyWith((message) => updates(message as UserLocation)) as UserLocation;
-
+  UserLocation copyWith(void Function(UserLocation) updates) => super.copyWith((message) => updates(message as UserLocation)) as UserLocation; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static UserLocation create() => UserLocation._();
   UserLocation createEmptyInstance() => create();
@@ -392,18 +477,33 @@ class UserLocation extends $pb.GeneratedMessage {
 }
 
 class UserTag extends $pb.GeneratedMessage {
-  factory UserTag() => create();
-  UserTag._() : super();
-  factory UserTag.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UserTag.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserTag', package: const $pb.PackageName(_omitMessageNames ? '' : 'pb'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'name')
-    ..a<$core.int>(2, _omitFieldNames ? '' : 'type', $pb.PbFieldType.O3)
-    ..a<$core.int>(3, _omitFieldNames ? '' : 'id', $pb.PbFieldType.O3)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserTag', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'name')
+    ..a<$core.int>(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'type', $pb.PbFieldType.O3)
+    ..a<$core.int>(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'id', $pb.PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
+  UserTag._() : super();
+  factory UserTag({
+    $core.String? name,
+    $core.int? type,
+    $core.int? id,
+  }) {
+    final _result = create();
+    if (name != null) {
+      _result.name = name;
+    }
+    if (type != null) {
+      _result.type = type;
+    }
+    if (id != null) {
+      _result.id = id;
+    }
+    return _result;
+  }
+  factory UserTag.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserTag.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -413,10 +513,8 @@ class UserTag extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  UserTag copyWith(void Function(UserTag) updates) => super.copyWith((message) => updates(message as UserTag)) as UserTag;
-
+  UserTag copyWith(void Function(UserTag) updates) => super.copyWith((message) => updates(message as UserTag)) as UserTag; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static UserTag create() => UserTag._();
   UserTag createEmptyInstance() => create();
@@ -454,24 +552,63 @@ class UserTag extends $pb.GeneratedMessage {
 }
 
 class UserGpsLocation extends $pb.GeneratedMessage {
-  factory UserGpsLocation() => create();
-  UserGpsLocation._() : super();
-  factory UserGpsLocation.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
-  factory UserGpsLocation.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
-
-  static final $pb.BuilderInfo _i = $pb.BuilderInfo(_omitMessageNames ? '' : 'UserGpsLocation', package: const $pb.PackageName(_omitMessageNames ? '' : 'pb'), createEmptyInstance: create)
-    ..aOS(1, _omitFieldNames ? '' : 'country')
-    ..aOS(2, _omitFieldNames ? '' : 'province')
-    ..aOS(3, _omitFieldNames ? '' : 'city')
-    ..aOS(4, _omitFieldNames ? '' : 'district')
-    ..aOS(5, _omitFieldNames ? '' : 'street')
-    ..aOS(6, _omitFieldNames ? '' : 'streetNumber')
-    ..aOS(7, _omitFieldNames ? '' : 'address')
-    ..a<$core.double>(8, _omitFieldNames ? '' : 'latitude', $pb.PbFieldType.OD)
-    ..a<$core.double>(9, _omitFieldNames ? '' : 'longitude', $pb.PbFieldType.OD)
+  static final $pb.BuilderInfo _i = $pb.BuilderInfo(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'UserGpsLocation', package: const $pb.PackageName(const $core.bool.fromEnvironment('protobuf.omit_message_names') ? '' : 'pb'), createEmptyInstance: create)
+    ..aOS(1, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'country')
+    ..aOS(2, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'province')
+    ..aOS(3, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'city')
+    ..aOS(4, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'district')
+    ..aOS(5, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'street')
+    ..aOS(6, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'streetNumber')
+    ..aOS(7, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'address')
+    ..a<$core.double>(8, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'latitude', $pb.PbFieldType.OD)
+    ..a<$core.double>(9, const $core.bool.fromEnvironment('protobuf.omit_field_names') ? '' : 'longitude', $pb.PbFieldType.OD)
     ..hasRequiredFields = false
   ;
 
+  UserGpsLocation._() : super();
+  factory UserGpsLocation({
+    $core.String? country,
+    $core.String? province,
+    $core.String? city,
+    $core.String? district,
+    $core.String? street,
+    $core.String? streetNumber,
+    $core.String? address,
+    $core.double? latitude,
+    $core.double? longitude,
+  }) {
+    final _result = create();
+    if (country != null) {
+      _result.country = country;
+    }
+    if (province != null) {
+      _result.province = province;
+    }
+    if (city != null) {
+      _result.city = city;
+    }
+    if (district != null) {
+      _result.district = district;
+    }
+    if (street != null) {
+      _result.street = street;
+    }
+    if (streetNumber != null) {
+      _result.streetNumber = streetNumber;
+    }
+    if (address != null) {
+      _result.address = address;
+    }
+    if (latitude != null) {
+      _result.latitude = latitude;
+    }
+    if (longitude != null) {
+      _result.longitude = longitude;
+    }
+    return _result;
+  }
+  factory UserGpsLocation.fromBuffer($core.List<$core.int> i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromBuffer(i, r);
+  factory UserGpsLocation.fromJson($core.String i, [$pb.ExtensionRegistry r = $pb.ExtensionRegistry.EMPTY]) => create()..mergeFromJson(i, r);
   @$core.Deprecated(
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.deepCopy] instead. '
@@ -481,10 +618,8 @@ class UserGpsLocation extends $pb.GeneratedMessage {
   'Using this can add significant overhead to your binary. '
   'Use [GeneratedMessageGenericExtensions.rebuild] instead. '
   'Will be removed in next major version')
-  UserGpsLocation copyWith(void Function(UserGpsLocation) updates) => super.copyWith((message) => updates(message as UserGpsLocation)) as UserGpsLocation;
-
+  UserGpsLocation copyWith(void Function(UserGpsLocation) updates) => super.copyWith((message) => updates(message as UserGpsLocation)) as UserGpsLocation; // ignore: deprecated_member_use
   $pb.BuilderInfo get info_ => _i;
-
   @$core.pragma('dart2js:noInline')
   static UserGpsLocation create() => UserGpsLocation._();
   UserGpsLocation createEmptyInstance() => create();
@@ -575,6 +710,3 @@ class UserGpsLocation extends $pb.GeneratedMessage {
   void clearLongitude() => clearField(9);
 }
 
-
-const _omitFieldNames = $core.bool.fromEnvironment('protobuf.omit_field_names');
-const _omitMessageNames = $core.bool.fromEnvironment('protobuf.omit_message_names');
