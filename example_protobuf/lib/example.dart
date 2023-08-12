@@ -10,15 +10,15 @@ part 'example.g.dart';
 
 @RestApi(baseUrl: 'https://5d42a6e2bc64f90014a56ca0.mockapi.io/api/v1/')
 abstract class RestClient {
-  factory RestClient(DioRetrofitProvider provider, {String baseUrl,}) = _RestClient;
+  factory RestClient(Retrofit retrofit, {String baseUrl,}) = _RestClient;
 
   @GET('/getUserInfo/{id}')
-  Future<UserInfoResp> getUserInfoByPath(@Path('id') String id);
+  Future<LoadResult<UserInfoResp>> getUserInfoByPath(@Path('id') String id);
   
   @GET('/getUserInfo')
-  Future<UserInfoResp> getUserInfoByQuery(@Query('id') String id);
+  Future<LoadResult<UserInfoResp>> getUserInfoByQuery(@Query('id') String id);
 
   @POST('/postUserInfo')
-  Future<UserInfoResp> postUserInfo(@Body() Map<String, dynamic> body);
+  Future<LoadResult<UserInfoResp>> postUserInfo(@Body() Map<String, dynamic> body);
 }
 

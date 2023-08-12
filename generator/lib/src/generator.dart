@@ -44,8 +44,8 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
   static const _dataVar = 'data';
   static const _localDataVar = '_data';
   static const _dioVar = '_dio';
-  static const _providerVar = '_provider';
-  static const _protoBufConverter = '_protoBufConverter';
+  static const _retrofit = '_retrofit';
+  static const _protoConverter = '_retrofit.protoConverter';
   static const _extraVar = 'extra';
   static const _localExtraVar = '_extra';
   static const _contentType = 'contentType';
@@ -102,8 +102,10 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
         )
         ..methods.addAll(_parseMethods(element));
       if (annotClassConsts.isEmpty) {
-        final factoryConst = element.constructors.firstWhereOrNull((element) => element.isFactory);
-        c.constructors.add(_generateConstructor(baseUrl, factoryConst: factoryConst));
+        final factoryConst = element.constructors
+            .firstWhereOrNull((element) => element.isFactory);
+        c.constructors
+            .add(_generateConstructor(baseUrl, factoryConst: factoryConst));
         c.implements.add(refer(_generateTypeParameterizedName(element)));
       } else {
         c.extend = Reference(_generateTypeParameterizedName(element));
@@ -113,8 +115,6 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
       }
       c.methods.addAll([
         _generateDioGetterMethod(),
-        _generateProtoBufCoverGetterMethod(),
-        _generateTypeSetterMethod(),
         _generateCombineBaseUrlsMethod(),
       ]);
     });
@@ -127,28 +127,19 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
   // tory: 添加provder变量
   Field _buildProviderFiled() => Field(
         (m) => m
-      ..name = _providerVar
-      ..type = refer('RetrofitProvider')
-      ..modifier = FieldModifier.final$,
-  );
+          ..name = _retrofit
+          ..type = refer('Retrofit')
+          ..modifier = FieldModifier.final$,
+      );
 
   Method _generateDioGetterMethod() => Method((m) {
-    m
-      ..name = _dioVar
-      ..returns = refer('Dio')
-      //..lambda = true
-      ..type = MethodType.getter
-      ..body = const Code('''return $_providerVar.dio;''');
-  });
-
-  Method _generateProtoBufCoverGetterMethod() => Method((m) {
-    m
-      ..name = _protoBufConverter
-      ..returns = refer('ProtoBufConverter?')
-      //..lambda = true
-      ..type = MethodType.getter
-      ..body = const Code('''return $_providerVar.protoBufConverter;''');
-  });
+        m
+          ..name = _dioVar
+          ..returns = refer('Dio')
+          //..lambda = true
+          ..type = MethodType.getter
+          ..body = const Code('''return $_retrofit.dio;''');
+      });
 
   Field _buildDioFiled() => Field(
         (m) => m
@@ -170,29 +161,28 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
     ConstructorElement? factoryConst,
   }) =>
       Constructor((c) {
-        final firstParameter = factoryConst?.parameters.firstWhereOrNull((element) => true);
-        final isFirstDio = firstParameter != null && _typeChecker(Dio).isExactlyType(firstParameter.type);
+        final firstParameter =
+            factoryConst?.parameters.firstWhereOrNull((element) => true);
+        final isFirstDio = firstParameter != null &&
+            _typeChecker(Dio).isExactlyType(firstParameter.type);
         if (isFirstDio) {
           c.requiredParameters.add(
-            Parameter(
-                  (p) => p
-                ..name = 'dio'
-                ..type = Reference('Dio')
-            ),
+            Parameter((p) => p
+              ..name = 'dio'
+              ..type = Reference('Dio')),
           );
-          c.initializers = ListBuilder(
-            [Code('$_providerVar = DioRetrofitProvider(dio: dio)')]
-          );
+          c.initializers =
+              ListBuilder([Code('$_retrofit = Retrofit(dio: dio)')]);
         } else {
           c.requiredParameters.add(
             Parameter(
-                  (p) => p
-                ..name = _providerVar
+              (p) => p
+                ..name = _retrofit
                 ..toThis = true,
             ),
           );
         }
-        
+
         c.optionalParameters.add(
           Parameter(
             (p) => p
@@ -251,7 +241,7 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
         return methodAnnot != null &&
             m.isAbstract &&
             (m.returnType.isDartAsyncFuture || m.returnType.isDartAsyncStream);
-      }).map((m) => _generateMethod(m)!);
+      }).expand((m) => _generateMethod(m)!);
 
   String _generateTypeParameterizedName(TypeParameterizedElement element) =>
       element.displayName +
@@ -389,17 +379,34 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
     return _getResponseInnerType(generic);
   }
 
-  Method? _generateMethod(MethodElement m) {
+  List<Method> _generateMethod(MethodElement m, {DartType? returnType}) {
     final httpMethod = _getMethodAnnotation(m);
     if (httpMethod == null) {
-      return null;
+      return [];
     }
 
+    final methods = <Method>[];
+    final wrappedReturnType = _getResponseType(m.returnType);
+    final isLoadResultType =
+        wrappedReturnType != null && _isLoadResultType(wrappedReturnType);
+    methods.add(
+      _generateSingleMethod(
+        m: m,
+        methodName: m.displayName,
+        body: _generateRequest(m, httpMethod),
+      ),
+    );
+    return methods;
+  }
+
+  Method _generateSingleMethod(
+      {required MethodElement m,
+      required String methodName,
+      required Code body}) {
     return Method((mm) {
       mm
-        ..returns =
-            refer(_displayString(m.type.returnType, withNullability: true))
-        ..name = m.displayName
+        ..returns = refer(_displayString(m.type.returnType, withNullability: true))
+        ..name = methodName
         ..types.addAll(m.typeParameters.map((e) => refer(e.name)))
         ..modifier = m.returnType.isDartAsyncFuture
             ? MethodModifier.async
@@ -437,7 +444,7 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
               ),
             ),
       );
-      mm.body = _generateRequest(m, httpMethod);
+      mm.body = body;
     });
   }
 
@@ -452,6 +459,26 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
       );
     });
     return literal(definePath);
+  }
+
+  /// 将MethodElement的方法进行try catch
+  Code _generateTryCatchBlock(MethodElement m) {
+    final blocks = <Code>[];
+    blocks.add(
+      refer('try {').code,
+    );
+    blocks.add(
+      refer('await _${m.displayName}')
+          .call(
+            m.parameters.map((it) => refer(it.name)).toList(),
+          )
+          .statement,
+    );
+    blocks.add(
+      refer('}catch (e) {}').code,
+    );
+
+    return Block.of(blocks);
   }
 
   Code _generateRequest(MethodElement m, ConstantReader httpMethod) {
@@ -560,36 +587,30 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
       );
       return Block.of(blocks);
     }
-    final isPbType = _isPbType(wrappedReturnType);
 
+    
     final isWrapped =
         _typeChecker(retrofit.HttpResponse).isExactlyType(wrappedReturnType);
+    final isLoadResultType =
+    _isLoadResultType(wrappedReturnType);
+    
     final returnType =
-        isWrapped ? _getResponseType(wrappedReturnType) : wrappedReturnType;
+      isLoadResultType || isWrapped ? _getResponseType(wrappedReturnType) : wrappedReturnType;
+    
+    final isPbType = returnType != null && _isPbType(returnType);
     if (isPbType) {
       // tory: 添加pb解析
       blocks
         ..add(
           refer('final $_resultVar = await $_dioVar.fetch')
               .call([options], {}, []).statement,
-        )..add(
+        )
+        ..add(
           Code('''
-      final _pbModel = $wrappedReturnType.create();
-      final _resultData = $_resultVar.data;
-      if ($_protoBufConverter != null) {
-        return $_protoBufConverter!(_pbModel, _resultData);
-      } else if (_resultData is List<int>) {
-        _pbModel.mergeFromBuffer(_resultData);
-      } else if (_resultData is String) {
-        final _json = await $_providerVar.jsonDecodeCallback(_resultData);
-        _pbModel.mergeFromProto3Json(_json, ignoreUnknownFields: true);
-      } else {
-        _pbModel.mergeFromProto3Json(_resultData, ignoreUnknownFields: true);
-      }
-      return _pbModel;
+      final _pbModel = $returnType.create();
+      return $_protoConverter($_resultVar, _pbModel);
       '''),
-      );
-      
+        );
     } else if (returnType == null || 'void' == returnType.toString()) {
       if (isWrapped) {
         blocks
@@ -1198,24 +1219,20 @@ You should create a new class to encapsulate the response.
         composeArguments[_onReceiveProgress] = receiveProgress;
       }
 
-      return refer('_setStreamType').call([
-        refer('Options')
-            .newInstance([], args)
-            .property('compose')
-            .call(
-              [refer(_dioVar).property('options'), path],
-              composeArguments,
-            )
-            .property('copyWith')
-            .call([], {
-              _baseUrlVar: refer('_combineBaseUrls').call([
-                refer(_dioVar).property('options').property('baseUrl'),
-                baseUrl,
-              ])
-            })
-      ], {}, [
-        type
-      ]);
+      return refer('Options')
+          .newInstance([], args)
+          .property('compose')
+          .call(
+            [refer(_dioVar).property('options'), path],
+            composeArguments,
+          )
+          .property('copyWith')
+          .call([], {
+            _baseUrlVar: refer('_combineBaseUrls').call([
+              refer(_dioVar).property('options').property('baseUrl'),
+              baseUrl,
+            ])
+          });
     } else {
       hasCustomOptions = true;
       blocks.add(
@@ -1332,31 +1349,6 @@ You should create a new class to encapsulate the response.
             
             return Uri.parse(dioBaseUrl).resolveUri(url).toString();
           ''');
-      });
-
-  Method _generateTypeSetterMethod() => Method((m) {
-        final t = refer('T');
-        final optionsParam = Parameter((p) {
-          p
-            ..name = 'requestOptions'
-            ..type = refer('RequestOptions');
-        });
-        m
-          ..name = '_setStreamType'
-          ..types = ListBuilder(<Reference>[t])
-          ..returns = refer('RequestOptions')
-          ..requiredParameters = ListBuilder(<Parameter>[optionsParam])
-          ..body = const Code('''
-if (T != dynamic &&
-        !(requestOptions.responseType == ResponseType.bytes ||
-            requestOptions.responseType == ResponseType.stream)) {
-      if (T == String) {
-        requestOptions.responseType = ResponseType.plain;
-      } else {
-        requestOptions.responseType = ResponseType.json;
-      }
-    }
-    return requestOptions;''');
       });
 
   bool _isBasicType(DartType? returnType) {
@@ -2353,8 +2345,26 @@ extension IterableExtension<T> on Iterable<T> {
     }
     return null;
   }
+
+  Iterable<R> expand<R>(Iterable<R> Function(T element) expand) sync* {
+    for (var element in this) {
+      yield* expand(element);
+    }
+  }
 }
 
 bool _isPbType(DartType dartType) =>
     TypeChecker.fromUrl('package:protobuf/protobuf.dart#GeneratedMessage')
         .isSuperTypeOf(dartType);
+
+// 判断是否是LoadResult<T>类型
+bool _isLoadResultType(DartType dartType) {
+  if (dartType is InterfaceType) {
+    final element = dartType.element;
+    print('_isLoadResultType: ${element.name}');
+    if (element.name == 'LoadResult') {
+      return true;
+    }
+  }
+  return false;
+}

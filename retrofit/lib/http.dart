@@ -337,3 +337,36 @@ class CacheControl {
   final bool onlyIfCached;
   final List<String> other;
 }
+
+
+enum LoadState { loading, failed, success }
+
+class LoadResult<T> {
+  final T? _data;
+  final LoadState state;
+  final dynamic error;
+  LoadResult._({required this.state, this.error, T? data}): _data = data;
+  
+  T get data {
+    if (_data == null) {
+      throw Exception('Data is null, please check state before access data, state: $state');
+    }
+    return _data!;
+  }
+
+  factory LoadResult.failed(dynamic error) {
+    return LoadResult._(state: LoadState.failed, error: error);
+  }
+
+  factory LoadResult.success(T data) {
+    return LoadResult._(state: LoadState.success, data: data);
+  }
+
+  factory LoadResult.loading() {
+    return LoadResult._(state: LoadState.loading);
+  }
+
+  bool get isLoading => state == LoadState.loading;
+  bool get isSuccess => state == LoadState.success;
+  bool get isFailed => state == LoadState.failed;
+}

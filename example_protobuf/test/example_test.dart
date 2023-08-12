@@ -35,7 +35,7 @@ void main() {
     ));
     _dio.interceptors.add(LogInterceptor(responseBody: true));
     _dio.interceptors.add(DateTimeInterceptor());
-    _client = RestClient(DioRetrofitProvider(dio: _dio), baseUrl: _server.url);
+    _client = RestClient(Retrofit(dio: _dio), baseUrl: _server.url);
   });
 
   tearDown(() {
