@@ -338,35 +338,47 @@ class CacheControl {
   final List<String> other;
 }
 
-
-enum LoadState { loading, failed, success }
+enum LoadState { loading, error, success }
 
 class LoadResult<T> {
+  static const codeLoadSuccess = 0;
+  static const codeLoading = -1;
+  static const codeUnknownError = -2;
+  /// 解析报错
+  static const codeParseError = -3;
+  
+  
   final T? _data;
   final LoadState state;
-  final dynamic error;
-  LoadResult._({required this.state, this.error, T? data}): _data = data;
-  
+  final int code;
+  final String? msg;
+
+  LoadResult._({required this.state, required this.code, this.msg, T? data})
+      : _data = data;
+
   T get data {
     if (_data == null) {
-      throw Exception('Data is null, please check state before access data, state: $state');
+      throw Exception(
+          'Data is null, please check state before access data, state: $state');
     }
     return _data!;
   }
 
-  factory LoadResult.failed(dynamic error) {
-    return LoadResult._(state: LoadState.failed, error: error);
+  factory LoadResult.error(int code, String msg) {
+    return LoadResult._(state: LoadState.error, code: code, msg: msg);
   }
 
   factory LoadResult.success(T data) {
-    return LoadResult._(state: LoadState.success, data: data);
+    return LoadResult._(state: LoadState.success, code: LoadResult.codeLoadSuccess, data: data);
   }
 
   factory LoadResult.loading() {
-    return LoadResult._(state: LoadState.loading);
+    return LoadResult._(state: LoadState.loading, code: LoadResult.codeLoading);
   }
 
   bool get isLoading => state == LoadState.loading;
+
   bool get isSuccess => state == LoadState.success;
-  bool get isFailed => state == LoadState.failed;
+
+  bool get isError => state == LoadState.error;
 }

@@ -10,6 +10,7 @@ environment:
 dependencies:
   dio: ^5.0.0
   meta: ^1.8.0
+  protobuf: any
 
 dev_dependencies:
   lints: ^2.0.1
