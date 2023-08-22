@@ -18,6 +18,7 @@ dependencies:
   dart_style: ^2.3.0
   dio: ^5.0.0
   retrofit: 
+    #path: ../retrofit
     git:
       url: git@github.com:ToryCrox/retrofit_pro.git
       ref: master

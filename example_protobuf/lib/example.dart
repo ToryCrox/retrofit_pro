@@ -20,5 +20,8 @@ abstract class RestClient {
 
   @POST('/postUserInfo')
   Future<LoadResult<UserInfoResp>> postUserInfo(@Body() Map<String, dynamic> body);
+
+  @POST('/postUserInfo1')
+  Future<LoadResult<UserInfoResp>> postUserInfoByBodyFiled(@BodyField('b1') String b1);
 }
 

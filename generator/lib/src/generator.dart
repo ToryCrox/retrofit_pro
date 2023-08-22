@@ -1494,8 +1494,56 @@ You should create a new class to encapsulate the response.
     }
 
     final annotation = _getAnnotation(m, retrofit.Body);
+    final bodyFields = _getAnnotations(m, retrofit.BodyField);
     final bodyName = annotation?.item1;
-    if (bodyName != null) {
+    if (bodyFields.isNotEmpty) {
+      final bodyFieldMap = bodyFields.map((p, r) {
+        final key = r.peek(_valueVar)?.stringValue ?? p.displayName;
+        final Expression value;
+        if (_isBasicType(p.type) ||
+            p.type.isDartCoreList ||
+            p.type.isDartCoreMap) {
+          value = refer(p.displayName);
+        } else {
+          switch (clientAnnotation.parser) {
+            case retrofit.Parser.JsonSerializable:
+              if (_isDateTime(p.type)) {
+                value = p.type.nullabilitySuffix == NullabilitySuffix.question
+                    ? refer(p.displayName)
+                    .nullSafeProperty('toIso8601String')
+                    .call([])
+                    : refer(p.displayName).property('toIso8601String').call([]);
+              } else {
+                value = p.type.nullabilitySuffix == NullabilitySuffix.question
+                    ? refer(p.displayName).nullSafeProperty('toJson').call([])
+                    : refer(p.displayName).property('toJson').call([]);
+              }
+              break;
+            case retrofit.Parser.MapSerializable:
+              value = p.type.nullabilitySuffix == NullabilitySuffix.question
+                  ? refer(p.displayName).nullSafeProperty('toMap').call([])
+                  : refer(p.displayName).property('toMap').call([]);
+              break;
+            case retrofit.Parser.DartJsonMapper:
+              value = refer(p.displayName);
+              break;
+            case retrofit.Parser.FlutterCompute:
+              value = refer(
+                'await compute(serialize${_displayString(p.type)}, ${p.displayName})',
+              );
+              break;
+          }
+        }
+        return MapEntry(key, value);
+      });
+      blocks
+        .add(
+          declareFinal(dataVar)
+              .assign(literalMap(bodyFieldMap, refer('String'), refer('dynamic')))
+              .statement,
+        );
+      return;
+    } else if (bodyName != null) {
       final nullToAbsent =
           annotation!.item2.peek('nullToAbsent')?.boolValue ?? false;
       final bodyTypeElement = bodyName.type.element;

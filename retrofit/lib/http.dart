@@ -184,8 +184,16 @@ class Header {
 @immutable
 class Body {
   const Body({this.nullToAbsent = false});
-
+  
   final bool nullToAbsent;
+}
+
+/// Use this annotation on a service method param when you want to directly control the request body
+@immutable
+class BodyField {
+  const BodyField(this.value);
+  
+  final String? value;
 }
 
 /// Use this annotation on a service method param when you want to indicate that no body should be
