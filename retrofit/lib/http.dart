@@ -371,6 +371,8 @@ class LoadResult<T> {
     }
     return _data!;
   }
+  
+  T? get dataOrNull => _data;
 
   factory LoadResult.error(int code, String msg) {
     return LoadResult._(state: LoadState.error, code: code, msg: msg);
