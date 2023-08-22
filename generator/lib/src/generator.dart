@@ -191,7 +191,8 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
               ..toThis = true,
           ),
         );
-        log.warning('superClassConst: $superClassConst, ${superClassConst?.parameters}');
+        log.warning(
+            'superClassConst: $superClassConst, ${superClassConst?.parameters}');
         if (superClassConst != null) {
           var superConstName = 'super';
           if (superClassConst.name.isNotEmpty) {
@@ -405,7 +406,8 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
       required Code body}) {
     return Method((mm) {
       mm
-        ..returns = refer(_displayString(m.type.returnType, withNullability: true))
+        ..returns =
+            refer(_displayString(m.type.returnType, withNullability: true))
         ..name = methodName
         ..types.addAll(m.typeParameters.map((e) => refer(e.name)))
         ..modifier = m.returnType.isDartAsyncFuture
@@ -486,8 +488,20 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
         m.returnType.isDartAsyncFuture ? 'return' : 'yield';
     final path = _generatePath(m, httpMethod);
     final blocks = <Code>[];
+    // tory: wrappedReturnType是Future中包裹的类型
+    final wrappedReturnType = _getResponseType(m.returnType);
 
-    _generateExtra(m, blocks, _localExtraVar);
+    final isWrapped =
+    wrappedReturnType != null && _typeChecker(retrofit.HttpResponse).isExactlyType(wrappedReturnType);
+    final isLoadResultType = wrappedReturnType != null && _isLoadResultType(wrappedReturnType);
+
+    final returnType = isLoadResultType || isWrapped
+        ? _getResponseType(wrappedReturnType)
+        : wrappedReturnType;
+
+    final isPbType = returnType != null && _isPbType(returnType);
+
+    _generateExtra(m, blocks, _localExtraVar, isPbType ? 'protobuf' : null);
 
     _generateQueries(m, blocks, _queryParamsVar);
     final headers = _generateHeaders(m);
@@ -575,8 +589,7 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
           refer(receiveProgress.item1.displayName);
     }
 
-    // tory: wrappedReturnType是Future中包裹的类型
-    final wrappedReturnType = _getResponseType(m.returnType);
+   
 
     final options = _parseOptions(m, namedArguments, blocks, extraOptions);
 
@@ -589,15 +602,6 @@ class RetrofitGenerator extends GeneratorForAnnotation<retrofit.RestApi> {
     }
 
     
-    final isWrapped =
-        _typeChecker(retrofit.HttpResponse).isExactlyType(wrappedReturnType);
-    final isLoadResultType =
-    _isLoadResultType(wrappedReturnType);
-    
-    final returnType =
-      isLoadResultType || isWrapped ? _getResponseType(wrappedReturnType) : wrappedReturnType;
-    
-    final isPbType = returnType != null && _isPbType(returnType);
     if (isPbType) {
       // tory: 添加pb解析
       blocks
@@ -1510,8 +1514,8 @@ You should create a new class to encapsulate the response.
               if (_isDateTime(p.type)) {
                 value = p.type.nullabilitySuffix == NullabilitySuffix.question
                     ? refer(p.displayName)
-                    .nullSafeProperty('toIso8601String')
-                    .call([])
+                        .nullSafeProperty('toIso8601String')
+                        .call([])
                     : refer(p.displayName).property('toIso8601String').call([]);
               } else {
                 value = p.type.nullabilitySuffix == NullabilitySuffix.question
@@ -1536,12 +1540,11 @@ You should create a new class to encapsulate the response.
         }
         return MapEntry(key, value);
       });
-      blocks
-        .add(
-          declareFinal(dataVar)
-              .assign(literalMap(bodyFieldMap, refer('String'), refer('dynamic')))
-              .statement,
-        );
+      blocks.add(
+        declareFinal(dataVar)
+            .assign(literalMap(bodyFieldMap, refer('String'), refer('dynamic')))
+            .statement,
+      );
       return;
     } else if (bodyName != null) {
       final nullToAbsent =
@@ -2139,38 +2142,44 @@ ${bodyName.displayName} == null
     MethodElement m,
     List<Code> blocks,
     String localExtraVar,
+      String? resultType,
   ) {
+    final extraMap = _getMethodAnnotations(m, retrofit.Extra)
+        .map((e) => e.peek('data'))
+        .map(
+          (data) => data?.mapValue.map(
+            (k, v) => MapEntry(
+              k?.toStringValue() ??
+                  (throw InvalidGenerationSourceError(
+                    'Invalid key for extra Map, only `String` keys are supported',
+                    element: m,
+                    todo: 'Make sure all keys are of string type',
+                  )),
+              v?.toBoolValue() ??
+                  v?.toDoubleValue() ??
+                  v?.toIntValue() ??
+                  v?.toStringValue() ??
+                  v?.toListValue() ??
+                  v?.toMapValue() ??
+                  v?.toSetValue() ??
+                  v?.toSymbolValue() ??
+                  (v?.toTypeValue() ??
+                      (v != null
+                          ? Code(revivedLiteral(v))
+                          : const Code('null'))),
+            ),
+          ),
+        )
+        .fold<Map<String, Object>>({}, (p, e) => p..addAll(e ?? {}));
+    if (resultType != null) {
+      extraMap['resultType'] = resultType;
+    }
+
     blocks.add(
       declareConst(localExtraVar)
           .assign(
             literalMap(
-              _getMethodAnnotations(m, retrofit.Extra)
-                  .map((e) => e.peek('data'))
-                  .map(
-                    (data) => data?.mapValue.map(
-                      (k, v) => MapEntry(
-                        k?.toStringValue() ??
-                            (throw InvalidGenerationSourceError(
-                              'Invalid key for extra Map, only `String` keys are supported',
-                              element: m,
-                              todo: 'Make sure all keys are of string type',
-                            )),
-                        v?.toBoolValue() ??
-                            v?.toDoubleValue() ??
-                            v?.toIntValue() ??
-                            v?.toStringValue() ??
-                            v?.toListValue() ??
-                            v?.toMapValue() ??
-                            v?.toSetValue() ??
-                            v?.toSymbolValue() ??
-                            (v?.toTypeValue() ??
-                                (v != null
-                                    ? Code(revivedLiteral(v))
-                                    : const Code('null'))),
-                      ),
-                    ),
-                  )
-                  .fold<Map<String, Object>>({}, (p, e) => p..addAll(e ?? {})),
+              extraMap,
               refer('String'),
               refer('dynamic'),
             ),

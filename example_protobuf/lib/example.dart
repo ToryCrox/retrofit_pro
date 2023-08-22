@@ -1,7 +1,4 @@
-import 'dart:convert' show jsonEncode;
-import 'dart:io';
 
-import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
 import 'package:retrofit_example_protobuf/protobuf/index.dart';
