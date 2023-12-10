@@ -1,3 +1,4 @@
 {
-    "dart.previewBuildRunnerTasks": true
+    "dart.previewBuildRunnerTasks": true,
+    "dart.flutterSdkPath": "/Users/xutao/flutter_4"
 }

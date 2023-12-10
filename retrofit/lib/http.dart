@@ -184,8 +184,16 @@ class Header {
 @immutable
 class Body {
   const Body({this.nullToAbsent = false});
-
+  
   final bool nullToAbsent;
+}
+
+/// Use this annotation on a service method param when you want to directly control the request body
+@immutable
+class BodyField {
+  const BodyField(this.value);
+  
+  final String? value;
 }
 
 /// Use this annotation on a service method param when you want to indicate that no body should be
@@ -336,4 +344,51 @@ class CacheControl {
   final bool noTransform;
   final bool onlyIfCached;
   final List<String> other;
+}
+
+enum LoadState { loading, error, success }
+
+class LoadResult<T> {
+  static const codeLoadSuccess = 0;
+  static const codeLoading = -1;
+  static const codeUnknownError = -2;
+  /// 解析报错
+  static const codeParseError = -3;
+  
+  
+  final T? _data;
+  final LoadState state;
+  final int code;
+  final String? msg;
+
+  LoadResult._({required this.state, required this.code, this.msg, T? data})
+      : _data = data;
+
+  T get data {
+    if (_data == null) {
+      throw Exception(
+          'Data is null, please check state before access data, state: $state');
+    }
+    return _data!;
+  }
+  
+  T? get dataOrNull => _data;
+
+  factory LoadResult.error(int code, String msg) {
+    return LoadResult._(state: LoadState.error, code: code, msg: msg);
+  }
+
+  factory LoadResult.success(T data) {
+    return LoadResult._(state: LoadState.success, code: LoadResult.codeLoadSuccess, data: data);
+  }
+
+  factory LoadResult.loading() {
+    return LoadResult._(state: LoadState.loading, code: LoadResult.codeLoading);
+  }
+
+  bool get isLoading => state == LoadState.loading;
+
+  bool get isSuccess => state == LoadState.success;
+
+  bool get isError => state == LoadState.error;
 }

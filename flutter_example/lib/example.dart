@@ -48,7 +48,7 @@ abstract class RestClient {
   @GET('/tag')
   Future<String> getTag({
     @DioOptions() Options? options,
-    @Header('Content-Type') String contentType,
+    @Header('Content-Type') required String contentType,
   });
 
   @GET('/tagNullable')
