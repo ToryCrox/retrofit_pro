@@ -2418,7 +2418,6 @@ bool _isPbType(DartType dartType) =>
 bool _isLoadResultType(DartType dartType) {
   if (dartType is InterfaceType) {
     final element = dartType.element;
-    print('_isLoadResultType: ${element.name}');
     if (element.name == 'LoadResult') {
       return true;
     }
